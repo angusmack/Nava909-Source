@@ -209,7 +209,7 @@ extern SeqMode seqmode;
 
 //////////////////////////////variable////////////////////////////////
 //Dio---------------------------------------------
-extern byte dinSr[5];   
+extern byte dinSr[5];
 extern byte tempDin[5][2];
 extern unsigned long debounceTimer;
 
@@ -313,7 +313,7 @@ extern SeqConfig seq;
 
 extern volatile byte ppqn;
 extern volatile byte curStep;
-extern  volatile int stepCount;
+extern volatile int stepCount;
 extern volatile byte tapStepCount; //this counter is used to get a better tap response
 extern volatile boolean stepChanged;
 extern volatile byte noteIndexCpt;
@@ -321,7 +321,7 @@ extern boolean isRunning;
 extern boolean isStop;
 extern SeqMode curSeqMode;
 extern SeqMode prevSeqMode;
-extern byte curInst;   //8 is BD trig out shift register
+extern byte curInst;    //8 is BD trig out shift register
 extern byte curBank;    //0 to 7 banks
 extern byte curPattern; // 0 to 255
 extern byte nextPattern;

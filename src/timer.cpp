@@ -10,10 +10,9 @@ void TimerStart()
 {
   TCCR1A = TCCR1B = 0;
   //prescale 8 => 16000000/8 = 2000000 Hz by tick
-  TCCR1B |= _BV (CS11) | _BV (WGM12);
+  TCCR1B |= _BV(CS11) | _BV(WGM12);
   TimerSetFrequency();
   TIMSK1 |= _BV(OCIE1A);
-
 }
 
 void TimerStop(void)
@@ -25,7 +24,6 @@ void TimerStop(void)
 void TimerSetFrequency()
 {
   // Calculates frequency for Timer1 = (BPM*ppqn)/60s
-#define FREQUENCY (((seq.bpm)*(PPQN))/60)
-  OCR1A =(F_CPU/ 8) / FREQUENCY;
+#define FREQUENCY (((seq.bpm) * (PPQN)) / 60)
+  OCR1A = (F_CPU / 8) / FREQUENCY;
 }
-

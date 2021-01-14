@@ -3,7 +3,7 @@
 
 //////////////////////////////variable////////////////////////////////
 //Dio---------------------------------------------
-byte dinSr[5] = {0};             //Store Din value of the five shift register
+byte dinSr[5] = {0}; //Store Din value of the five shift register
 byte tempDin[5][2];
 unsigned long debounceTimer;
 
@@ -12,11 +12,11 @@ byte instOut[NBR_INST] = {
     BD, BD, SD, SD, LT, LT, MT, MT, HT, HT, RM, HC, CH, CH, CRASH, RIDE};
 unsigned int readButtonState;
 
- boolean clearBtn;
- boolean instBtn;
- boolean shiftBtn;
- boolean trkBtn;
- boolean ptrnBtn;
+boolean clearBtn;
+boolean instBtn;
+boolean shiftBtn;
+boolean trkBtn;
+boolean ptrnBtn;
 
 //Buttons
 struct Button stepBtn[NBR_STEP_BTN];
@@ -192,15 +192,15 @@ unsigned long bootElapseTime = 0;
 byte btnPlayStopByte = 0;
 byte btnEnterByte = 0;
 
-uint8_t  font0[8] = {
-  0x10, 0x10, 0x11, 0x12, 0x04, 0x08, 0x10, 0x00};// 1/  font
-uint8_t  font1[8] = {
-  0x00, 0x00, 0x17, 0x14, 0x17, 0x15, 0x17, 0x00};// small 16 font
-uint8_t  font2[8] = {
-  0x00, 0x00, 0x10, 0x18, 0x10, 0x10, 0x0C, 0x00};//small T font
-uint8_t  font3[8] = {
-  0x00, 0x00, 0x0E, 0x0A, 0x0E, 0x0A, 0x0E, 0x00};//small 8 font
-uint8_t  font4[8] = {
-  0x00, 0x00, 0x1B, 0x09, 0x1B, 0x0A, 0x1B, 0x00};// Small 32 font
-uint8_t  font5[8] = {
-  0x01, 0x01, 0x01, 0x01, 0x01, 0x0F, 0x1F, 0x0E};//noir tempo
+uint8_t font0[8] = {
+    0x10, 0x10, 0x11, 0x12, 0x04, 0x08, 0x10, 0x00}; // 1/  font
+uint8_t font1[8] = {
+    0x00, 0x00, 0x17, 0x14, 0x17, 0x15, 0x17, 0x00}; // small 16 font
+uint8_t font2[8] = {
+    0x00, 0x00, 0x10, 0x18, 0x10, 0x10, 0x0C, 0x00}; //small T font
+uint8_t font3[8] = {
+    0x00, 0x00, 0x0E, 0x0A, 0x0E, 0x0A, 0x0E, 0x00}; //small 8 font
+uint8_t font4[8] = {
+    0x00, 0x00, 0x1B, 0x09, 0x1B, 0x0A, 0x1B, 0x00}; // Small 32 font
+uint8_t font5[8] = {
+    0x01, 0x01, 0x01, 0x01, 0x01, 0x0F, 0x1F, 0x0E}; //noir tempo

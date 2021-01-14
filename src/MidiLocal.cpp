@@ -11,7 +11,7 @@
 /////////////////////Function//////////////////////
 
 //initialize midi real time variable
-void  InitMidiRealTime()
+void InitMidiRealTime()
 {
   midiStart = LOW;
   midiStop = LOW;
@@ -21,15 +21,18 @@ void  InitMidiRealTime()
 //intialize note off when stop or patternChanged  or ext instrument loop back
 void InitMidiNoteOff()
 {
-  if(midiNoteOnActive){
+  if (midiNoteOnActive)
+  {
     midiNoteOnActive = FALSE;
-    if (noteIndexCpt) MidiSendNoteOff(seq.TXchannel, pattern[ptrnBuffer].extNote[noteIndexCpt - 1]);
-    else MidiSendNoteOff(seq.TXchannel, pattern[ptrnBuffer].extNote[pattern[ptrnBuffer].extLength]);
+    if (noteIndexCpt)
+      MidiSendNoteOff(seq.TXchannel, pattern[ptrnBuffer].extNote[noteIndexCpt - 1]);
+    else
+      MidiSendNoteOff(seq.TXchannel, pattern[ptrnBuffer].extNote[pattern[ptrnBuffer].extLength]);
   }
 }
 
 //Send note OFF
-void MidiSendNoteOff (byte channel, byte value)
+void MidiSendNoteOff(byte channel, byte value)
 {
   MIDI.sendNoteOff(value + 12, 0, channel);
   /* MidiSend(channel + 0x80);
@@ -37,7 +40,7 @@ void MidiSendNoteOff (byte channel, byte value)
    MidiSend(0x00);*/
 }
 //Send note ON
-void MidiSendNoteOn (byte channel, byte value, byte velocity)
+void MidiSendNoteOn(byte channel, byte value, byte velocity)
 {
   MIDI.sendNoteOn(value + 12, velocity, channel);
   /* MidiSend(channel + 0x90);
@@ -49,13 +52,12 @@ void MidiSendNoteOn (byte channel, byte value, byte velocity)
 void HandleClock()
 {
   DIN_CLK_HIGH;
-  CountPPQN();//execute 4x because internal sequencer run as 96 ppqn
+  CountPPQN(); //execute 4x because internal sequencer run as 96 ppqn
   CountPPQN();
   delayMicroseconds(2000);
   CountPPQN();
   CountPPQN();
   DIN_CLK_LOW;
-
 }
 
 //handle start
@@ -89,8 +91,10 @@ void DisconnectMidiHandleRealTime()
 void HandleNoteOn(byte channel, byte pitch, byte velocity)
 {
   //Serial.println(seq.RMXchannel);
-  if (channel == seq.RXchannel){
-    switch (pitch){
+  if (channel == seq.RXchannel)
+  {
+    switch (pitch)
+    {
     case 35:
     case 36:
       MidiTrigOn(BD, velocity);
@@ -138,8 +142,10 @@ void HandleNoteOn(byte channel, byte pitch, byte velocity)
 //Handle noteOFF
 void HandleNoteOff(byte channel, byte pitch, byte velocity)
 {
-  if (channel == seq.RXchannel){
-    switch (pitch){
+  if (channel == seq.RXchannel)
+  {
+    switch (pitch)
+    {
     case 35:
     case 36:
       MidiTrigOff(BD);
@@ -184,20 +190,26 @@ void HandleNoteOff(byte channel, byte pitch, byte velocity)
   }
 }
 
-
 //MidiTrigOn insturment
 void MidiTrigOn(byte inst, byte velocity)
 {
-  if (instWasMidiTrigged[inst] == FALSE){
-    if (inst == OH) SetMuxTrigMidi(CH, velocity);//OH and CH share same velocity
-    else SetMuxTrigMidi(inst, velocity);
-    if (inst == CH || inst == OH){
+  if (instWasMidiTrigged[inst] == FALSE)
+  {
+    if (inst == OH)
+      SetMuxTrigMidi(CH, velocity); //OH and CH share same velocity
+    else
+      SetMuxTrigMidi(inst, velocity);
+    if (inst == CH || inst == OH)
+    {
       SetDoutTrig(1 << HH);
       delayMicroseconds(2000);
-      if (inst == OH) SetDoutTrig(0);
-      else SetDoutTrig(1 << HH_SLCT);
+      if (inst == OH)
+        SetDoutTrig(0);
+      else
+        SetDoutTrig(1 << HH_SLCT);
     }
-    else {
+    else
+    {
       SetDoutTrig(1 << inst);
       delayMicroseconds(2000);
       SetDoutTrig(0);
@@ -215,10 +227,5 @@ void MidiTrigOff(byte inst)
 //Midi send all note off
 void SendAllNoteOff()
 {
-  MIDI.sendControlChange(ALL_NOTE_OFF , 0, seq.TXchannel);	
+  MIDI.sendControlChange(ALL_NOTE_OFF, 0, seq.TXchannel);
 }
-
-
-
-
-

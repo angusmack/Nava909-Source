@@ -14,12 +14,14 @@
 /////////////////////Function//////////////////////
 void SeqConfiguration()
 {
-  if(seq.syncChanged){
+  if (seq.syncChanged)
+  {
     //Sync configuration
-    switch (seq.sync){
+    switch (seq.sync)
+    {
     case MASTER:
       DisconnectMidiHandleRealTime();
-      TimerStart();//cf timer
+      TimerStart(); //cf timer
       break;
     case SLAVE:
       TimerStop();
@@ -31,15 +33,12 @@ void SeqConfiguration()
     }
     seq.syncChanged = FALSE;
   }
-  if (seq.setupNeedSaved && enterBtn.justPressed){
+  if (seq.setupNeedSaved && enterBtn.justPressed)
+  {
     SaveSeqSetup();
     seq.setupNeedSaved = FALSE;
     LcdPrintSaved();
   }
-  if (!seq.configMode) seq.setupNeedSaved = FALSE;
-    
+  if (!seq.configMode)
+    seq.setupNeedSaved = FALSE;
 }
-
-
-
-

@@ -37,15 +37,16 @@
 void SavePattern(byte patternNbr)
 {
   unsigned long adress = (unsigned long)(PTRN_OFFSET + patternNbr * PTRN_SIZE);
-  WireBeginTX(adress); 
+  WireBeginTX(adress);
   // Serial.println(adress);
   //TRIG-----------------------------------------------
-  for (byte i = 0; i < NBR_INST; i++){ 
-    byte lowbyte =  (pattern[ptrnBuffer].inst[i] & 0xFF);
+  for (byte i = 0; i < NBR_INST; i++)
+  {
+    byte lowbyte = (pattern[ptrnBuffer].inst[i] & 0xFF);
     byte highbyte = (pattern[ptrnBuffer].inst[i] >> 8) & 0xFF;
-    Wire.write((byte)(lowbyte)); 
+    Wire.write((byte)(lowbyte));
     Wire.write((byte)(highbyte));
-  }//32 bytes
+  } //32 bytes
 
   //SETUP-----------------------------------------------
   Wire.write((byte)(pattern[ptrnBuffer].length));
@@ -57,50 +58,57 @@ void SavePattern(byte patternNbr)
   Wire.write((byte)(pattern[ptrnBuffer].groupLength));
   Wire.write((byte)(pattern[ptrnBuffer].totalAcc));
 
-  for(int a =0; a < 24; a++){
-    Wire.write( (byte)(0));//unused parameters
-  }//32 bytes
+  for (int a = 0; a < 24; a++)
+  {
+    Wire.write((byte)(0)); //unused parameters
+  }                        //32 bytes
 
-  Wire.endTransmission();//end page transmission
-  delay(DELAY_WR);//delay between each write page
+  Wire.endTransmission(); //end page transmission
+  delay(DELAY_WR);        //delay between each write page
 
   //EXT INST-----------------------------------------------
-  for(int nbrPage = 0; nbrPage < 2; nbrPage++){
+  for (int nbrPage = 0; nbrPage < 2; nbrPage++)
+  {
     adress = (unsigned long)(PTRN_OFFSET + (patternNbr * PTRN_SIZE) + (MAX_PAGE_SIZE * nbrPage) + PTRN_SETUP_OFFSET);
     //Serial.println(adress);
     WireBeginTX(adress);
-    for (byte j = 0; j < MAX_PAGE_SIZE; j++){
+    for (byte j = 0; j < MAX_PAGE_SIZE; j++)
+    {
       Wire.write((byte)(pattern[ptrnBuffer].extNote[j + (MAX_PAGE_SIZE * nbrPage)] & 0xFF));
-    }//64 bytes  fisrt page
-    Wire.endTransmission();//end page transmission
-    delay(DELAY_WR);//delay between each write page
-  }//2 * 64 bytes = 128 bytes
+    }                       //64 bytes  fisrt page
+    Wire.endTransmission(); //end page transmission
+    delay(DELAY_WR);        //delay between each write page
+  }                         //2 * 64 bytes = 128 bytes
 
   //VELOCITY-----------------------------------------------
-  for(int nbrPage = 0; nbrPage < 4; nbrPage++){
+  for (int nbrPage = 0; nbrPage < 4; nbrPage++)
+  {
     adress = (unsigned long)(PTRN_OFFSET + (patternNbr * PTRN_SIZE) + (MAX_PAGE_SIZE * nbrPage) + PTRN_EXT_OFFSET);
     //Serial.println(adress);
     WireBeginTX(adress);
-    for (byte i = 0; i < 4; i++){//loop as many instrument for a page
-      for (byte j = 0; j < NBR_STEP; j++){
-        Wire.write((byte)(pattern[ptrnBuffer].velocity[i + 4*nbrPage][j] & 0xFF)); 
+    for (byte i = 0; i < 4; i++)
+    { //loop as many instrument for a page
+      for (byte j = 0; j < NBR_STEP; j++)
+      {
+        Wire.write((byte)(pattern[ptrnBuffer].velocity[i + 4 * nbrPage][j] & 0xFF));
       }
     }
-    Wire.endTransmission();//end of 64 bytes transfer
-    delay(DELAY_WR);//delay between each write page
-  }//4 * 64 bytes = 256 bytes
+    Wire.endTransmission(); //end of 64 bytes transfer
+    delay(DELAY_WR);        //delay between each write page
+  }                         //4 * 64 bytes = 256 bytes
 }
 
 //Load Pattern
 void LoadPattern(byte patternNbr)
 {
   unsigned long adress = (unsigned long)(PTRN_OFFSET + patternNbr * PTRN_SIZE);
-  WireBeginTX(adress); 
+  WireBeginTX(adress);
   Wire.endTransmission();
-  Wire.requestFrom(HRDW_ADDRESS,MAX_PAGE_SIZE); //request a 64 bytes page
+  Wire.requestFrom(HRDW_ADDRESS, MAX_PAGE_SIZE); //request a 64 bytes page
   //TRIG-----------------------------------------------
-  for(int i =0; i<NBR_INST;i++){
-    pattern[!ptrnBuffer].inst[i] = (unsigned long)((Wire.read() & 0xFF) | (( Wire.read() << 8) & 0xFF00));
+  for (int i = 0; i < NBR_INST; i++)
+  {
+    pattern[!ptrnBuffer].inst[i] = (unsigned long)((Wire.read() & 0xFF) | ((Wire.read() << 8) & 0xFF00));
     // Serial.println(Wire.read());
   }
   //SETUP-----------------------------------------------
@@ -112,29 +120,35 @@ void LoadPattern(byte patternNbr)
   pattern[!ptrnBuffer].groupPos = Wire.read();
   pattern[!ptrnBuffer].groupLength = Wire.read();
   pattern[!ptrnBuffer].totalAcc = Wire.read();
-  for(int a = 0; a < 24; a++){
+  for (int a = 0; a < 24; a++)
+  {
     Wire.read();
   }
   //EXT INST-----------------------------------------------
-  for(int nbrPage = 0; nbrPage < 2; nbrPage++){
+  for (int nbrPage = 0; nbrPage < 2; nbrPage++)
+  {
     adress = (unsigned long)(PTRN_OFFSET + (patternNbr * PTRN_SIZE) + (MAX_PAGE_SIZE * nbrPage) + PTRN_SETUP_OFFSET);
     WireBeginTX(adress);
     Wire.endTransmission();
-    Wire.requestFrom(HRDW_ADDRESS,MAX_PAGE_SIZE); //request of  64 bytes
+    Wire.requestFrom(HRDW_ADDRESS, MAX_PAGE_SIZE); //request of  64 bytes
 
-    for (byte j = 0; j < MAX_PAGE_SIZE; j++){
-      pattern[!ptrnBuffer].extNote[j + (MAX_PAGE_SIZE * nbrPage) ] = Wire.read();
+    for (byte j = 0; j < MAX_PAGE_SIZE; j++)
+    {
+      pattern[!ptrnBuffer].extNote[j + (MAX_PAGE_SIZE * nbrPage)] = Wire.read();
     }
   }
   //VELOCITY-----------------------------------------------
-  for(int nbrPage = 0; nbrPage < 4; nbrPage++){
+  for (int nbrPage = 0; nbrPage < 4; nbrPage++)
+  {
     adress = (unsigned long)(PTRN_OFFSET + (patternNbr * PTRN_SIZE) + (MAX_PAGE_SIZE * nbrPage) + PTRN_EXT_OFFSET);
     WireBeginTX(adress);
     Wire.endTransmission();
-    Wire.requestFrom(HRDW_ADDRESS,MAX_PAGE_SIZE); //request of  64 bytes
-    for (byte i = 0; i < 4; i++){//loop as many instrument for a page
-      for (byte j = 0; j < NBR_STEP; j++){
-        pattern[!ptrnBuffer].velocity[i + 4*nbrPage][j] = (Wire.read() & 0xFF);
+    Wire.requestFrom(HRDW_ADDRESS, MAX_PAGE_SIZE); //request of  64 bytes
+    for (byte i = 0; i < 4; i++)
+    { //loop as many instrument for a page
+      for (byte j = 0; j < NBR_STEP; j++)
+      {
+        pattern[!ptrnBuffer].velocity[i + 4 * nbrPage][j] = (Wire.read() & 0xFF);
       }
     }
   }
@@ -143,41 +157,46 @@ void LoadPattern(byte patternNbr)
 //Track save
 void SaveTrack(byte trackNbr)
 {
-  byte lowbyte =  (byte)(track[trkBuffer].length & 0xFF);
+  byte lowbyte = (byte)(track[trkBuffer].length & 0xFF);
   byte highbyte = (byte)((track[trkBuffer].length >> 8) & 0xFF);
   track[trkBuffer].patternNbr[1022] = lowbyte;
   track[trkBuffer].patternNbr[1023] = highbyte;
 
   unsigned long adress;
-  for(int nbrPage = 0; nbrPage < TRACK_SIZE/MAX_PAGE_SIZE; nbrPage++){
+  for (int nbrPage = 0; nbrPage < TRACK_SIZE / MAX_PAGE_SIZE; nbrPage++)
+  {
     adress = (unsigned long)(PTRN_OFFSET + (trackNbr * TRACK_SIZE) + (MAX_PAGE_SIZE * nbrPage) + TRACK_OFFSET);
     WireBeginTX(adress);
-    for (byte i = 0; i < MAX_PAGE_SIZE; i++){//loop as many instrument for a page
-      Wire.write((byte)(track[trkBuffer].patternNbr[i + (MAX_PAGE_SIZE * nbrPage)] & 0xFF)); 
+    for (byte i = 0; i < MAX_PAGE_SIZE; i++)
+    { //loop as many instrument for a page
+      Wire.write((byte)(track[trkBuffer].patternNbr[i + (MAX_PAGE_SIZE * nbrPage)] & 0xFF));
     }
-    Wire.endTransmission();//end of 64 bytes transfer
-    delay(DELAY_WR);//delay between each write page
+    Wire.endTransmission(); //end of 64 bytes transfer
+    delay(DELAY_WR);        //delay between each write page
   }
-
 }
 
 //Load track
 void LoadTrack(byte trackNbr)
 {
   unsigned long adress;
-  for(int nbrPage = 0; nbrPage < TRACK_SIZE/MAX_PAGE_SIZE; nbrPage++){
+  for (int nbrPage = 0; nbrPage < TRACK_SIZE / MAX_PAGE_SIZE; nbrPage++)
+  {
     adress = (unsigned long)(PTRN_OFFSET + (trackNbr * TRACK_SIZE) + (MAX_PAGE_SIZE * nbrPage) + TRACK_OFFSET);
     WireBeginTX(adress);
     Wire.endTransmission();
-    if (adress > 65535) Wire.requestFrom(HRDW_ADDRESS_UP,MAX_PAGE_SIZE); //request of  64 bytes
-    else Wire.requestFrom(HRDW_ADDRESS,MAX_PAGE_SIZE); //request of  64 bytes
-    for (byte i = 0; i < MAX_PAGE_SIZE; i++){//loop as many instrument for a page
-      track[trkBuffer].patternNbr[i + (MAX_PAGE_SIZE * nbrPage)] = (Wire.read() & 0xFF); 
+    if (adress > 65535)
+      Wire.requestFrom(HRDW_ADDRESS_UP, MAX_PAGE_SIZE); //request of  64 bytes
+    else
+      Wire.requestFrom(HRDW_ADDRESS, MAX_PAGE_SIZE); //request of  64 bytes
+    for (byte i = 0; i < MAX_PAGE_SIZE; i++)
+    { //loop as many instrument for a page
+      track[trkBuffer].patternNbr[i + (MAX_PAGE_SIZE * nbrPage)] = (Wire.read() & 0xFF);
     }
   }
   byte lowbyte = (byte)track[trkBuffer].patternNbr[1022];
   byte highbyte = (byte)track[trkBuffer].patternNbr[1023];
-  track[trkBuffer].length =  (unsigned long)(lowbyte | highbyte << 8);
+  track[trkBuffer].length = (unsigned long)(lowbyte | highbyte << 8);
 }
 
 //Save Setup
@@ -185,37 +204,37 @@ void SaveSeqSetup()
 {
   unsigned long adress = (unsigned long)(OFFSET_SETUP);
   WireBeginTX(adress);
-  Wire.write((byte)(seq.sync)); 
+  Wire.write((byte)(seq.sync));
   Wire.write((byte)(seq.defaultBpm));
   Wire.write((byte)(seq.TXchannel));
   Wire.write((byte)(seq.RXchannel));
 
-  Wire.endTransmission();//end page transmission
-  delay(DELAY_WR);//delay between each write page
+  Wire.endTransmission(); //end page transmission
+  delay(DELAY_WR);        //delay between each write page
 }
 
 //Load Setup
 void LoadSeqSetup()
 {
   unsigned long adress = (unsigned long)(OFFSET_SETUP);
-  WireBeginTX(adress); 
+  WireBeginTX(adress);
   Wire.endTransmission();
-  Wire.requestFrom(HRDW_ADDRESS_UP,SETUP_SIZE); //
+  Wire.requestFrom(HRDW_ADDRESS_UP, SETUP_SIZE); //
   seq.sync = (Wire.read() & 0xFF);
   seq.sync = constrain(seq.sync, 0, 1);
   seq.defaultBpm = (Wire.read() & 0xFF);
   seq.defaultBpm = constrain(seq.defaultBpm, MIN_BPM, MAX_BPM);
   seq.TXchannel = (Wire.read() & 0xFF);
-  seq.TXchannel = constrain(seq.TXchannel, 1 ,16);
+  seq.TXchannel = constrain(seq.TXchannel, 1, 16);
   seq.RXchannel = (Wire.read() & 0xFF);
-  seq.RXchannel = constrain(seq.RXchannel, 1 ,16);
-
+  seq.RXchannel = constrain(seq.RXchannel, 1, 16);
 }
 
 //Save pattern group
 void SavePatternGroup(byte firstPattern, byte length)
 {
-  for (int a = 0; a <= length ; a++){
+  for (int a = 0; a <= length; a++)
+  {
     unsigned long adress = (unsigned long)(PTRN_OFFSET + ((firstPattern + a) * PTRN_SIZE) + OFFSET_GROUP);
     WireBeginTX(adress);
     /* Serial.print("adresse=");
@@ -224,23 +243,24 @@ void SavePatternGroup(byte firstPattern, byte length)
      Serial.println(a);
      Serial.print("groupLeght=");
      Serial.println(length);*/
-    Wire.write((byte)(a)); //pattern[ptrnBuffer].groupPos
-    Wire.write((byte)(length));//pattern[ptrnBuffer].groupLength
-    Wire.endTransmission();//end page transmission
-    delay(DELAY_WR);//delay between each write page
+    Wire.write((byte)(a));      //pattern[ptrnBuffer].groupPos
+    Wire.write((byte)(length)); //pattern[ptrnBuffer].groupLength
+    Wire.endTransmission();     //end page transmission
+    delay(DELAY_WR);            //delay between each write page
   }
 }
 
 //Clear pattern group
 void ClearPatternGroup(byte firstPattern, byte length)
 {
-  for (int a = 0; a <= length ; a++){
+  for (int a = 0; a <= length; a++)
+  {
     unsigned long adress = (unsigned long)(PTRN_OFFSET + ((firstPattern + a) * PTRN_SIZE) + OFFSET_GROUP);
     WireBeginTX(adress);
-    Wire.write((byte)(0)); //pattern[ptrnBuffer].groupPos
-    Wire.write((byte)(0));//pattern[ptrnBuffer].groupLength
-    Wire.endTransmission();//end page transmission
-    delay(DELAY_WR);//delay between each write page
+    Wire.write((byte)(0));  //pattern[ptrnBuffer].groupPos
+    Wire.write((byte)(0));  //pattern[ptrnBuffer].groupLength
+    Wire.endTransmission(); //end page transmission
+    delay(DELAY_WR);        //delay between each write page
   }
 }
 
@@ -250,11 +270,10 @@ byte LoadPatternGroup(byte patternNum, byte type)
   unsigned long adress = (unsigned long)(PTRN_OFFSET + (patternNum * PTRN_SIZE) + OFFSET_GROUP + type);
   WireBeginTX(adress);
   Wire.endTransmission();
-  Wire.requestFrom(HRDW_ADDRESS,(unsigned long)(1)); //
+  Wire.requestFrom(HRDW_ADDRESS, (unsigned long)(1)); //
   byte data = (Wire.read() & 0xFF);
   return data;
 }
-
 
 //==================================================================================================
 //==================================================================================================
@@ -262,18 +281,19 @@ byte LoadPatternGroup(byte patternNum, byte type)
 void InitEEprom()
 {
   unsigned long adress;
-  
+
   //Pattern init
-  for (byte nbrPattern = 0; nbrPattern < MAX_PTRN ; nbrPattern++)
+  for (byte nbrPattern = 0; nbrPattern < MAX_PTRN; nbrPattern++)
   {
     adress = (unsigned long)(PTRN_OFFSET + nbrPattern * PTRN_SIZE);
-    WireBeginTX(adress); 
+    WireBeginTX(adress);
     // Serial.println(adress);
     //TRIG-----------------------------------------------
-    for (byte i = 0; i < NBR_INST; i++){ 
-      Wire.write((byte)(0)); 
+    for (byte i = 0; i < NBR_INST; i++)
+    {
       Wire.write((byte)(0));
-    }//32 bytes
+      Wire.write((byte)(0));
+    } //32 bytes
 
     //SETUP-----------------------------------------------
     Wire.write((byte)(DEFAULT_LEN - 1));
@@ -284,75 +304,84 @@ void InitEEprom()
     Wire.write((byte)(0));
     Wire.write((byte)(0));
     Wire.write((byte)(0));
-    for(int a = 0; a < 24; a++){
+    for (int a = 0; a < 24; a++)
+    {
       //Wire.write( (byte)(0));//unused parameters
-    }//32 bytes
+    } //32 bytes
 
-    Wire.endTransmission();//end page transmission
-    delay(DELAY_WR);//delay between each write page
+    Wire.endTransmission(); //end page transmission
+    delay(DELAY_WR);        //delay between each write page
 
     //EXT INST-----------------------------------------------
-    for(int nbrPage = 0; nbrPage < 2; nbrPage++){
+    for (int nbrPage = 0; nbrPage < 2; nbrPage++)
+    {
       adress = (unsigned long)(PTRN_OFFSET + (nbrPattern * PTRN_SIZE) + (MAX_PAGE_SIZE * nbrPage) + PTRN_SETUP_OFFSET);
       //Serial.println(adress);
       WireBeginTX(adress);
-      for (byte j = 0; j < MAX_PAGE_SIZE; j++){
+      for (byte j = 0; j < MAX_PAGE_SIZE; j++)
+      {
         Wire.write((byte)(0));
-      }//64 bytes -> fisrt page
-      Wire.endTransmission();//end page transmission
-      delay(DELAY_WR);//delay between each write page
-    }//2 * 64 bytes = 128 bytes
+      }                       //64 bytes -> fisrt page
+      Wire.endTransmission(); //end page transmission
+      delay(DELAY_WR);        //delay between each write page
+    }                         //2 * 64 bytes = 128 bytes
 
     //VELOCITY-----------------------------------------------
-    for(int nbrPage = 0; nbrPage < 4; nbrPage++){
+    for (int nbrPage = 0; nbrPage < 4; nbrPage++)
+    {
       adress = (unsigned long)(PTRN_OFFSET + (nbrPattern * PTRN_SIZE) + (MAX_PAGE_SIZE * nbrPage) + PTRN_EXT_OFFSET);
       //Serial.println(adress);
       WireBeginTX(adress);
-      for (byte i = 0; i < 4; i++){//loop as many instrument for a page
-        for (byte j = 0; j < NBR_STEP; j++){
-          Wire.write((byte)(0)); 
+      for (byte i = 0; i < 4; i++)
+      { //loop as many instrument for a page
+        for (byte j = 0; j < NBR_STEP; j++)
+        {
+          Wire.write((byte)(0));
         }
       }
-      Wire.endTransmission();//end of 64 bytes transfer
-      delay(DELAY_WR);//delay between each write page
-    }//4 * 64 bytes = 256 bytes
+      Wire.endTransmission(); //end of 64 bytes transfer
+      delay(DELAY_WR);        //delay between each write page
+    }                         //4 * 64 bytes = 256 bytes
     static unsigned int tempInitLeds;
     tempInitLeds |= bitSet(tempInitLeds, (nbrPattern / 8));
     SetDoutLed(tempInitLeds, 0, 0);
     //delay(10);
   }
- /* Serial.print("patrn offset add=");
+  /* Serial.print("patrn offset add=");
   Serial.println(adress);*/
-  
+
   //Track Init
-  for (unsigned long trackNbr = 0; trackNbr < MAX_TRACK; trackNbr++){
-    for(unsigned long nbrPage = 0; nbrPage < (TRACK_SIZE/MAX_PAGE_SIZE); nbrPage++){// to init 1024 byte track size we need 16 pages of 64 bytes
+  for (unsigned long trackNbr = 0; trackNbr < MAX_TRACK; trackNbr++)
+  {
+    for (unsigned long nbrPage = 0; nbrPage < (TRACK_SIZE / MAX_PAGE_SIZE); nbrPage++)
+    { // to init 1024 byte track size we need 16 pages of 64 bytes
       adress = (unsigned long)(PTRN_OFFSET + (trackNbr * TRACK_SIZE) + (MAX_PAGE_SIZE * nbrPage) + TRACK_OFFSET);
       WireBeginTX(adress);
-      for (byte i = 0; i < MAX_PAGE_SIZE; i++){//loop as many instrument for a page
-        Wire.write((byte)(0)); 
+      for (byte i = 0; i < MAX_PAGE_SIZE; i++)
+      { //loop as many instrument for a page
+        Wire.write((byte)(0));
       }
-      Wire.endTransmission();//end of 64 bytes transfer
-      delay(DELAY_WR);//delay between each write page
+      Wire.endTransmission(); //end of 64 bytes transfer
+      delay(DELAY_WR);        //delay between each write page
     }
     static unsigned int tempInitLeds;
     tempInitLeds |= bitSet(tempInitLeds, trackNbr);
     SetDoutLed(tempInitLeds, 0, 0);
-   //delay(10);
+    //delay(10);
   }
- /* Serial.print("track offset add=");
+  /* Serial.print("track offset add=");
   Serial.println(TRACK_OFFSET);*/
-  
+
   //Setup init
   adress = (unsigned long)(OFFSET_SETUP);
   WireBeginTX(adress);
-  Wire.write((byte)(MASTER));//seq.sync)); 
-  Wire.write((byte)(DEFAULT_BPM));//seq.defaultBpm));
-  Wire.write((byte)(1));//seq.TXchannel));
-  Wire.write((byte)(1));//seq.RXchannel));
+  Wire.write((byte)(MASTER));      //seq.sync));
+  Wire.write((byte)(DEFAULT_BPM)); //seq.defaultBpm));
+  Wire.write((byte)(1));           //seq.TXchannel));
+  Wire.write((byte)(1));           //seq.RXchannel));
 
-  Wire.endTransmission();//end page transmission
-  delay(DELAY_WR);//delay between each write page
+  Wire.endTransmission(); //end page transmission
+  delay(DELAY_WR);        //delay between each write page
   /*Serial.print("setup offset add=");
   Serial.println((unsigned long)(TRACK_OFFSET + (TRACK_SIZE * MAX_TRACK)));*/
 }
@@ -396,52 +425,12 @@ void InitSeqSetup()
 void WireBeginTX(unsigned long address)
 {
   byte hardwareAddress;
-  if (address > 65535) hardwareAddress = HRDW_ADDRESS_UP;
-  else hardwareAddress = HRDW_ADDRESS;
-  
+  if (address > 65535)
+    hardwareAddress = HRDW_ADDRESS_UP;
+  else
+    hardwareAddress = HRDW_ADDRESS;
+
   Wire.beginTransmission(hardwareAddress);
   Wire.write((byte)(address >> 8));
   Wire.write((byte)(address & 0xFF));
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

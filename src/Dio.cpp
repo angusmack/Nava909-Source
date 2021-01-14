@@ -34,7 +34,7 @@ void ScanDin()
   {
     debounceTimer = millis();
     //shiftregisted switches
-    SPI.beginTransaction(SPIset); 
+    SPI.beginTransaction(SPIset);
     SW_CS_HIGH;
     tempDin[0][0] = SPI.transfer(0);
     tempDin[1][0] = SPI.transfer(0);
@@ -48,10 +48,13 @@ void ScanDin()
     encSwValue[0] = ENC_SW_GET;
 
     //Compare
-    for (int a = 0; a < 5; a++){
-      if (tempDin[a][0] == tempDin[a][1]) dinSr[a] = tempDin[a][0];
+    for (int a = 0; a < 5; a++)
+    {
+      if (tempDin[a][0] == tempDin[a][1])
+        dinSr[a] = tempDin[a][0];
     }
-    if (encSwValue[0] == encSwValue[1]) encSwState = encSwValue[0];
+    if (encSwValue[0] == encSwValue[1])
+      encSwState = encSwValue[0];
   }
 
   //shiftregisted switches
@@ -62,7 +65,7 @@ void ScanDin()
   tempDin[2][1] = SPI.transfer(0);
   tempDin[3][1] = SPI.transfer(0);
   tempDin[4][1] = SPI.transfer(0);
-  SW_CS_LOW; 
+  SW_CS_LOW;
   SPI.endTransaction();
 
   //µC direct pin switches
@@ -76,11 +79,11 @@ void SetDoutLed(unsigned int stepLed, unsigned int configLed, byte menuLed)
   LED_CS_LOW;
   SPI.transfer(byte(stepLed >> 8));
   SPI.transfer(byte(stepLed));
-  SPI.transfer(byte(configLed >>8));
+  SPI.transfer(byte(configLed >> 8));
   SPI.transfer(byte(configLed));
   SPI.transfer(byte(menuLed));
   LED_CS_HIGH;
-  SPI.endTransaction(); 
+  SPI.endTransaction();
 }
 
 //Set Dout Trig------------------------------------------------------------
@@ -91,7 +94,7 @@ void SetDoutTrig(unsigned int value)
   SPI.transfer(byte(value >> 8));
   SPI.transfer(byte(value));
   TRIG_CS_HIGH;
-  SPI.endTransaction(); 
+  SPI.endTransaction();
 }
 
 //Reset Dout Trig---------------------------------------------------------
@@ -108,10 +111,11 @@ void ResetDoutTrig()
 //Set Dac voltage---------------------------------------------------------
 void SetDacA(byte velocity)
 {
-  if (velocity >= 127) velocity = 127;
+  if (velocity >= 127)
+    velocity = 127;
   unsigned int milliVolt = map(velocity, 0, 127, 0, 4090);
   unsigned int command = 0;
-  command |= 0x1000;// Active DAC out A
+  command |= 0x1000; // Active DAC out A
   command |= (milliVolt & 0x0FFF);
   SPI.beginTransaction(SPIset);
   DAC_CS_LOW;
@@ -124,7 +128,7 @@ void SetDacA(byte velocity)
 //Scan Din bootloader
 void ScanDinBoot()
 {
-  SPI.beginTransaction(SPIset); 
+  SPI.beginTransaction(SPIset);
   SW_CS_HIGH;
   SPI.transfer(0);
   SPI.transfer(0);
@@ -134,11 +138,3 @@ void ScanDinBoot()
   SW_CS_LOW;
   SPI.endTransaction();
 }
-
-
-
-
-
-
-
-

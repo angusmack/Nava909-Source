@@ -3,8 +3,8 @@
 
 void InitMidiRealTime();
 void InitMidiNoteOff();
-void MidiSendNoteOff (byte channel, byte value);
-void MidiSendNoteOn (byte channel, byte value, byte velocity);
+void MidiSendNoteOff(byte channel, byte value);
+void MidiSendNoteOn(byte channel, byte value, byte velocity);
 void HandleClock();
 void HandleStart();
 void HandleStop();
