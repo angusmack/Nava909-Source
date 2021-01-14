@@ -10,7 +10,7 @@
 #define __PROG_TYPES_COMPAT__
 
 const char PROGMEM txt_INST0[]    ="TRG";
-const char PROGMEM txt_INST1[]  ="   ";
+const char PROGMEM txt_INST1[]    ="   ";
 const char PROGMEM txt_INST2[]    =" HT";
 const char PROGMEM txt_INST3[]    ="RIM";
 const char PROGMEM txt_INST4[]    ="HCL";
@@ -45,8 +45,8 @@ const char txt_NOTE6[] PROGMEM   ="F#";
 const char txt_NOTE7[] PROGMEM   =" G";
 const char txt_NOTE8[] PROGMEM   ="G#";
 const char txt_NOTE9[] PROGMEM   =" A";
-const char txt_NOTE10[] PROGMEM   ="A#";
-const char txt_NOTE11[] PROGMEM   =" B";
+const char txt_NOTE10[] PROGMEM  ="A#";
+const char txt_NOTE11[] PROGMEM  =" B";
 
 const char txt_SYNC0[] PROGMEM   ="MST";
 const char txt_SYNC1[] PROGMEM   ="SLV";
@@ -70,18 +70,12 @@ PGM_P const nameNote[] = {
   txt_NOTE0,txt_NOTE1,txt_NOTE2,txt_NOTE3,txt_NOTE4,txt_NOTE5,txt_NOTE6,txt_NOTE7,txt_NOTE8,txt_NOTE9,txt_NOTE10,txt_NOTE11};
 
 //Special character-----------------------------------------------
-uint8_t  font0[8] = {
-  0x10, 0x10, 0x11, 0x12, 0x04, 0x08, 0x10, 0x00};// 1/  font
-uint8_t  font1[8] = {
-  0x00, 0x00, 0x17, 0x14, 0x17, 0x15, 0x17, 0x00};// small 16 font
-uint8_t  font2[8] = {
-  0x00, 0x00, 0x10, 0x18, 0x10, 0x10, 0x0C, 0x00};//small T font
-uint8_t  font3[8] = {
-  0x00, 0x00, 0x0E, 0x0A, 0x0E, 0x0A, 0x0E, 0x00};//small 8 font
-uint8_t  font4[8] = {
-  0x00, 0x00, 0x1B, 0x09, 0x1B, 0x0A, 0x1B, 0x00};// Small 32 font
-uint8_t  font5[8] = {
-  0x01, 0x01, 0x01, 0x01, 0x01, 0x0F, 0x1F, 0x0E};//noir tempo
+extern uint8_t  font0[8];// 1/  font
+extern uint8_t  font1[8];// small 16 font
+extern uint8_t  font2[8];//small T font
+extern uint8_t  font3[8];//small 8 font
+extern uint8_t  font4[8];// Small 32 font
+extern uint8_t  font5[8];//noir tempo
 
 #endif//end if string_h
 
